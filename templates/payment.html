@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway</title>
+    <!-- <link rel="stylesheet" href="style/style.css"> -->
+    <link href="/static/payment/style/style.css" rel="stylesheet" type="text/css" >
+    <link rel="icon" href="{{ url_for('static', filename='pay.png') }}" type="image/png">
+    <style>
+        .custom-button {
+            background-color: #00ff55;
+            color: white;
+            border: 2px solid #00ff55;
+            padding: 2px 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            
+            text-shadow: 0 0 5px #00ff55, 0 0 10px #00ff55, 0 0 15px #00ff55;
+            box-shadow: 0 0 5px #00ff55, 0 0 10px #00ff55, 0 0 15px #00ff55;
+        
+            /* Hover effect */
+            :hover {
+                background-color: #009944;
+                border: 2px solid #009944;
+                
+                font-weight: bold;
+                color: #ffffff;
+            }
+            
+            /* Bold and visible text */
+            font-weight: bold; /* Make the text bold */
+            color: #ffffff; /* Set the text color to white */
+        }
+    </style>
+
+</head>
+<body>
+    
+    <header>Payment Gateway</header>
+
+    <div class="container">
+      <div id="image" class="result"></div>
+      <div id="image2" class="result"></div>
+    </div>
+    
+    <footer>
+        <p>Respected, {{ name }}<br>Now, You Can Pay with the above given QR Code,<br> Simply Scan QR through your payment scanner...</p>
+        
+        <!-- Display the dynamic data -->
+        <p><b>---------BILL DETAILS----------</b></p>
+        <p>Total Amount: {{ total_amt }}</p>
+        <p>Electricity Bill: {{ electricity_bill }}</p>
+        <p>Current Month Unit: {{ curr_unit }}</p>
+        <p>Last Month Unit: {{ last_unit }}</p>
+        <p>Receipt_No: {{ receiptno }}</p>
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <input type="text" name="receipt_number" id="receipt_number" style="width: 100%; max-width: 300px; margin-top: 20px;" placeholder="Receipt_No." required>
+            <a id="download-link"><button class="custom-button" onclick="downloadReceipt()" style="width: 100%; max-width: 300px; margin-top: 20px;">RECEIPT</button></a>
+        <!-- Hidden download link --> 
+        </div>    
+          
+        
+
+        <script>
+            function downloadReceipt() {
+                const receiptNumberInput = document.getElementById('receipt_number');
+                const receiptNumber = receiptNumberInput.value;
+        
+                // Make an AJAX request to your server
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', `/download_receipt/pdf?receipt_number=${receiptNumber}`, true);
+                xhr.responseType = 'json';
+        
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const response = xhr.response;
+                        const downloadLink = document.getElementById('download-link');
+                        downloadLink.href = response.download_url;
+                        downloadLink.download = 'receipt.pdf';
+                        downloadLink.innerHTML = '';
+                        downloadLink.style.display = 'block';
+                        downloadLink.click();
+                        // Reload the page after a short delay (e.g., 2 seconds)
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    
+                    } else {
+                        alert('Failed to generate PDF. Please check the receipt number.');
+                    }
+                };
+        
+                xhr.send();
+            }
+        </script>
+        
+    </footer>
+
+
+    <!-- <script src="./index.js"></script> -->
+</body>
+</html>
+
+<script>
+    const image = document.getElementById("image");
+    const image2 = document.getElementById("image2");
+
+    // Replace 'your_image1.jpg' and 'your_image2.jpg' with your own image paths
+    const imagePath1 = '/static/payment/1.jpg';
+    const imagePath2 = '/static/payment/2.jpg';
+
+    image.innerHTML = `<img src="${imagePath1}" alt="Your Image 1" />`;
+    image2.innerHTML = `<img src="${imagePath2}" alt="Your Image 2" />`;
+</script>
