@@ -44,8 +44,8 @@ conn_bill.execute('''CREATE TABLE IF NOT EXISTS aimDB
         Unit TEXT,
         Rent TEXT,
         Total_Amt TEXT,
-        Elec_Bill TEXT
-        ApplicationNo TEXT
+        Elec_Bill TEXT,
+        ApplicationNo TEXT,
         document_path TEXT
         );''')
 conn_bill.commit()
